@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pleasant Activities</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf6f0;
+  --warm-white:#fffdf9;
+  --text:#2d2a26;
+  --text-soft:#7a7268;
+  --border:#e8e0d5;
+  --gold:#d4963a;
+  --gold-light:#f5e4c0;
+}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── HEADER ── */
+.app-header{
+  text-align:center;padding:52px 20px 28px;
+  background:linear-gradient(170deg,#fff9f0 0%,var(--cream) 100%);
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.app-header::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(212,150,58,.09),transparent);
+  pointer-events:none;
+}
+.app-header h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,2.9rem);line-height:1.15;color:var(--text);margin-bottom:10px;}
+.app-header h1 em{color:var(--gold);font-style:italic;}
+.app-header p{color:var(--text-soft);font-size:14.5px;max-width:420px;margin:0 auto;line-height:1.7;}
+
+/* ── NAV TABS ── */
+.nav-tabs{
+  display:flex;background:var(--warm-white);border-bottom:1px solid var(--border);
+}
+.nav-tab{
+  flex:1;padding:14px 10px;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:600;
+  color:var(--text-soft);background:none;border:none;cursor:pointer;
+  border-bottom:2.5px solid transparent;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.nav-tab:hover{color:var(--gold);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(212,150,58,.04);}
+.picks-badge{
+  background:var(--gold);color:#fff;font-size:11px;font-weight:700;
+  border-radius:20px;padding:1px 8px;min-width:22px;text-align:center;
+}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 28px;font-size:13px;color:var(--text-soft);
+  border-bottom:1px solid var(--border);background:var(--warm-white);
+  min-height:46px;
+}
+.breadcrumb .crumb{cursor:pointer;transition:color .2s;}
+.breadcrumb .crumb:hover{color:var(--gold);}
+.breadcrumb .sep{opacity:.4;}
+.breadcrumb .current{color:var(--text);font-weight:600;}
+
+/* ── STATS STRIP ── */
+.stats-strip{
+  display:flex;gap:0;border-bottom:1px solid var(--border);
+  background:var(--warm-white);
+}
+.stat-pill{flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--border);}
+.stat-pill:last-child{border-right:none;}
+.stat-pill .n{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);}
+.stat-pill .l{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);margin-top:1px;}
+
+/* ── VIEWS ── */
+.view{display:none;animation:fadeUp .35s ease both;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CATEGORY GRID ── */
+.cat-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:18px;padding:32px 28px 100px;max-width:1100px;margin:0 auto;
+}
+.cat-card{
+  background:var(--warm-white);border:1.5px solid var(--border);border-radius:20px;
+  padding:24px 20px 20px;cursor:pointer;
+  transition:all .22s;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:flex-start;gap:12px;
+}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(45,42,38,.12);border-color:var(--cat-border, var(--gold));}
+.cat-art{width:68px;height:68px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--cat-bg,var(--gold-light));flex-shrink:0;}
+.cat-card h3{font-family:'Playfair Display',serif;font-size:15.5px;font-weight:500;line-height:1.3;color:var(--text);}
+.cat-meta{font-size:12px;color:var(--text-soft);}
+.cat-prog{width:100%;height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:4px;}
+.cat-prog-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .4s;}
+
+/* ── PICKS VIEW ── */
+.picks-header{
+  padding:28px 28px 0;max-width:1100px;margin:0 auto;
+}
+.picks-header h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px;}
+.picks-header p{font-size:13.5px;color:var(--text-soft);}
+.picks-group{padding:24px 28px 0;max-width:1100px;margin:0 auto;}
+.picks-group-title{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  font-family:'Playfair Display',serif;font-size:16px;font-weight:500;
+}
+.picks-group-title .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.picks-list{display:flex;flex-direction:column;gap:8px;}
+.pick-row{
+  background:var(--warm-white);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:all .2s;animation:fadeUp .25s ease both;
+}
+.pick-row:hover{border-color:rgba(212,150,58,.4);box-shadow:0 3px 12px rgba(45,42,38,.07);}
+.pick-row.rated-5{border-left:3px solid var(--gold);}
+.pick-row.rated-4{border-left:3px solid #85c1e9;}
+.pick-row.rated-3{border-left:3px solid #7fb87a;}
+.pick-row.rated-2{border-left:3px solid #c39bd3;}
+.pick-row.rated-1{border-left:3px solid #ccc;}
+.pick-name{font-size:13.5px;font-weight:500;color:var(--text);flex:1;}
+.pick-meta{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pick-cat{font-size:11px;color:var(--text-soft);background:var(--cream);padding:3px 9px;border-radius:20px;border:1px solid var(--border);}
+.pick-stars{font-size:14px;color:#e8a030;letter-spacing:1px;}
+.empty-picks{text-align:center;padding:70px 20px;color:var(--text-soft);}
+.empty-picks .emoji{font-size:48px;margin-bottom:16px;}
+.empty-picks p{font-size:15px;line-height:1.6;}
+.picks-filter-tabs{
+  display:flex;gap:8px;padding:16px 28px 0;max-width:1100px;margin:0 auto;flex-wrap:wrap;
+}
+
+/* ── ACTIVITY VIEW HEADER ── */
+.act-header{
+  padding:24px 28px 0;max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.back-btn{
+  display:flex;align-items:center;gap:6px;background:var(--warm-white);
+  border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;
+  font-family:'Nunito',sans-serif;font-size:13px;color:var(--text-soft);
+  cursor:pointer;transition:all .18s;font-weight:500;
+}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+.cat-badge{
+  display:flex;align-items:center;gap:8px;
+  border-radius:30px;padding:6px 16px;font-size:13.5px;font-weight:600;color:var(--text);
+  background:var(--badge-bg,var(--gold-light));
+}
+
+/* ── SEARCH & FILTERS ── */
+.search-bar{padding:16px 28px 0;max-width:1100px;margin:0 auto;}
+.search-inner{position:relative;}
+.search-inner svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-soft);}
+.search-inner input{
+  width:100%;padding:11px 14px 11px 40px;
+  border:1.5px solid var(--border);border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:14px;background:#fff;color:var(--text);outline:none;
+  transition:border-color .2s;
+}
+.search-inner input:focus{border-color:var(--gold);}
+.search-inner input::placeholder{color:var(--text-soft);}
+
+.filter-tabs{
+  display:flex;gap:8px;padding:14px 28px 0;max-width:1100px;margin:0 auto;flex-wrap:wrap;
+}
+.ftab{
+  padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);
+  background:transparent;font-family:'Nunito',sans-serif;font-size:12.5px;
+  color:var(--text-soft);cursor:pointer;transition:all .18s;font-weight:500;
+}
+.ftab:hover{border-color:var(--gold);color:var(--gold);}
+.ftab.active{background:var(--gold);border-color:var(--gold);color:#fff;}
+
+/* ── ACTIVITY GRID ── */
+.act-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;padding:20px 28px 120px;max-width:1100px;margin:0 auto;
+}
+.act-card{
+  background:var(--warm-white);border:1.5px solid var(--border);border-radius:18px;
+  overflow:hidden;transition:all .22s;
+  box-shadow:0 2px 8px rgba(45,42,38,.05);
+  animation:fadeUp .3s ease both;
+}
+.act-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(45,42,38,.1);border-color:rgba(212,150,58,.45);}
+.act-card.rated{border-color:rgba(212,150,58,.65);background:linear-gradient(160deg,#fff 70%,#fdf5e6);}
+
+.act-img{
+  width:100%;height:124px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.act-img svg{width:76px;height:76px;filter:drop-shadow(0 4px 8px rgba(45,42,38,.12));}
+
+.act-body{padding:16px 14px 18px;}
+.act-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.45;margin-bottom:12px;min-height:36px;}
+.stars{display:flex;gap:3px;}
+.star{font-size:21px;cursor:pointer;color:#ddd;line-height:1;transition:color .1s,transform .12s;user-select:none;}
+.star.filled{color:#e8a030;}
+.star.hov{color:#f4c060;transform:scale(1.2);}
+.rating-text{font-size:11px;color:var(--text-soft);margin-top:5px;min-height:14px;}
+
+/* ── EXPORT BAR ── */
+.export-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(250,246,240,.93);backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
+  padding:14px 28px;display:flex;gap:10px;justify-content:center;z-index:50;
+}
+.btn{display:flex;align-items:center;gap:7px;border-radius:30px;padding:11px 22px;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;border:none;}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 18px rgba(212,150,58,.4);}
+.btn-primary:hover{background:#c4862a;transform:translateY(-1px);}
+.btn-ghost{background:var(--warm-white);color:var(--text-soft);border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:20px;right:20px;background:#2d2a26;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;opacity:0;transform:translateY(-8px);transition:all .3s;z-index:200;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+@media(max-width:600px){
+  .cat-grid,.act-grid{grid-template-columns:repeat(2,1fr);gap:12px;padding-left:16px;padding-right:16px;}
+  .act-header,.search-bar,.filter-tabs{padding-left:16px;padding-right:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>Feel Good <em>Activities</em></h1>
+  <p>Choose a category, explore activities, and rate what feels good to you.</p>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" id="tab-cats" onclick="showCats()">📋 All Categories</button>
+  <button class="nav-tab" id="tab-picks" onclick="showPicks()">⭐ My Picks <span class="picks-badge" id="picks-badge" style="display:none">0</span></button>
+</div>
+
+<div class="breadcrumb" id="breadcrumb"><span class="current">All Categories</span></div>
+
+<div class="stats-strip">
+  <div class="stat-pill"><div class="n" id="s-total">282</div><div class="l">Activities</div></div>
+  <div class="stat-pill"><div class="n" id="s-rated">0</div><div class="l">Rated</div></div>
+  <div class="stat-pill"><div class="n" id="s-loved">0</div><div class="l">Loved ★★★★★</div></div>
+  <div class="stat-pill"><div class="n" id="s-cats">0/10</div><div class="l">Categories</div></div>
+</div>
+
+<div class="view active" id="view-cats">
+  <div class="cat-grid" id="cat-grid"></div>
+</div>
+
+<div class="view" id="view-acts">
+  <div class="act-header" id="act-header"></div>
+  <div class="filter-tabs">
+    <button class="ftab active" onclick="setActFilter('all',this)">All</button>
+    <button class="ftab" onclick="setActFilter('rated',this)">Rated</button>
+    <button class="ftab" onclick="setActFilter('loved',this)">Loved ★★★★★</button>
+    <button class="ftab" onclick="setActFilter('unrated',this)">Not yet rated</button>
+  </div>
+  <div class="search-bar">
+    <div class="search-inner">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="act-search" placeholder="Search in this category…" oninput="renderActs()">
+    </div>
+  </div>
+  <div class="act-grid" id="act-grid"></div>
+</div>
+
+<div class="view" id="view-picks">
+  <div class="picks-header">
+    <h2>⭐ My Picks</h2>
+    <p>All the activities you've rated, in one place.</p>
+  </div>
+  <div class="picks-filter-tabs">
+    <button class="ftab active" onclick="setPicksFilter('all',this)">All rated</button>
+    <button class="ftab" onclick="setPicksFilter('5',this)">Love ★★★★★</button>
+    <button class="ftab" onclick="setPicksFilter('4',this)">Really like ★★★★</button>
+    <button class="ftab" onclick="setPicksFilter('3',this)">Sounds nice ★★★</button>
+    <button class="ftab" onclick="setPicksFilter('2',this)">Maybe someday ★★</button>
+    <button class="ftab" onclick="setPicksFilter('1',this)">Not for me ★</button>
+  </div>
+  <div id="picks-content"></div>
+</div>
+
+<div class="export-bar">
+  <button class="btn btn-ghost" onclick="resetAll()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset
+  </button>
+  <button class="btn btn-primary" onclick="exportSummary()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Client Summary
+  </button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// MOOD SVG ILLUSTRATIONS - hand-crafted for each activity type
+// ═══════════════════════════════════════════════════════════════
+const SVGS = {
+  tree:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="28" r="20" fill="#7fb87a" opacity=".9"/><circle cx="28" cy="35" r="14" fill="#5ca05a"/><circle cx="52" cy="33" r="16" fill="#6db56a"/><rect x="36" y="46" width="8" height="18" rx="3" fill="#8b5e3c"/><ellipse cx="40" cy="65" rx="14" ry="3" fill="#a8d8a0" opacity=".5"/></svg>`,
+  mountain:`<svg viewBox="0 0 80 80" fill="none"><polygon points="40,10 70,64 10,64" fill="#8ab4d4"/><polygon points="40,10 55,38 25,38" fill="#cce0f0"/><polygon points="55,30 70,64 40,64" fill="#6b9ec2"/><circle cx="64" cy="20" r="7" fill="#f9e4b0"/><line x1="64" y1="12" x2="64" y2="8" stroke="#f9a825" stroke-width="2"/></svg>`,
+  sun:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="16" fill="#f9c74f"/><g stroke="#f9c74f" stroke-width="2.5" stroke-linecap="round"><line x1="40" y1="12" x2="40" y2="18"/><line x1="40" y1="62" x2="40" y2="68"/><line x1="12" y1="40" x2="18" y2="40"/><line x1="62" y1="40" x2="68" y2="40"/><line x1="21" y1="21" x2="25" y2="25"/><line x1="55" y1="55" x2="59" y2="59"/><line x1="59" y1="21" x2="55" y2="25"/><line x1="25" y1="55" x2="21" y2="59"/></g></svg>`,
+  wave:`<svg viewBox="0 0 80 80" fill="none"><rect y="40" width="80" height="40" fill="#60a8e0" opacity=".25"/><path d="M0 44 Q10 36 20 44 Q30 52 40 44 Q50 36 60 44 Q70 52 80 44" stroke="#3a8bc8" stroke-width="2.5" fill="none"/><path d="M0 54 Q10 46 20 54 Q30 62 40 54 Q50 46 60 54 Q70 62 80 54" stroke="#60a8e0" stroke-width="2" fill="none"/><circle cx="40" cy="28" r="12" fill="#f9c74f"/></svg>`,
+  flower:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="10" fill="#f9c74f"/><ellipse cx="40" cy="22" rx="7" ry="11" fill="#f28b82"/><ellipse cx="40" cy="58" rx="7" ry="11" fill="#f28b82"/><ellipse cx="22" cy="40" rx="11" ry="7" fill="#f4a0b5"/><ellipse cx="58" cy="40" rx="11" ry="7" fill="#f4a0b5"/><ellipse cx="28" cy="28" rx="6" ry="10" fill="#f9b4ba" transform="rotate(-45 28 28)"/><ellipse cx="52" cy="52" rx="6" ry="10" fill="#f9b4ba" transform="rotate(-45 52 52)"/><ellipse cx="52" cy="28" rx="6" ry="10" fill="#e8a0c0" transform="rotate(45 52 28)"/><ellipse cx="28" cy="52" rx="6" ry="10" fill="#e8a0c0" transform="rotate(45 28 52)"/></svg>`,
+  bird:`<svg viewBox="0 0 80 80" fill="none"><path d="M10 42 Q22 20 42 34 Q56 20 68 42" stroke="#5ca05a" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M28 52 Q40 64 52 52" stroke="#7fb87a" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="42" cy="36" r="6" fill="#f9c74f"/><circle cx="44" cy="34" r="1.5" fill="#333"/><path d="M42 36 L48 34" stroke="#e8a030" stroke-width="2" stroke-linecap="round"/></svg>`,
+  fire:`<svg viewBox="0 0 80 80" fill="none"><path d="M40 66 Q20 56 22 38 Q24 28 32 22 Q28 34 36 36 Q34 24 44 14 Q42 28 50 30 Q56 22 54 38 Q58 32 56 40 Q60 50 40 66Z" fill="#f4845f"/><path d="M40 66 Q28 57 30 44 Q32 36 38 32 Q36 40 42 42 Q40 35 46 28 Q44 38 50 40 Q54 48 40 66Z" fill="#f9c74f"/><ellipse cx="40" cy="66" rx="12" ry="3.5" fill="#e8a030" opacity=".5"/></svg>`,
+  star_sky:`<svg viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="12" fill="#1a1a3e" opacity=".8"/><circle cx="20" cy="18" r="2" fill="white" opacity=".9"/><circle cx="40" cy="12" r="2.5" fill="white"/><circle cx="62" cy="20" r="1.5" fill="white" opacity=".8"/><circle cx="12" cy="36" r="1.5" fill="white" opacity=".6"/><circle cx="68" cy="30" r="2" fill="white" opacity=".9"/><circle cx="30" cy="28" r="1" fill="white" opacity=".7"/><path d="M40 46 L43 54 L51 54 L44.5 59 L47 67 L40 62 L33 67 L35.5 59 L29 54 L37 54Z" fill="#f9c74f"/></svg>`,
+  palette:`<svg viewBox="0 0 80 80" fill="none"><path d="M20 50 Q12 30 28 18 Q44 6 58 16 Q72 26 66 42 Q62 52 52 54 Q44 56 42 50 Q38 44 32 50 Q26 56 20 50Z" fill="#f5f0e8" stroke="#e8d5b0" stroke-width="1.5"/><circle cx="28" cy="30" r="5" fill="#f28b82"/><circle cx="42" cy="20" r="5" fill="#f9c74f"/><circle cx="56" cy="28" r="5" fill="#85c1e9"/><circle cx="58" cy="44" r="5" fill="#7fb87a"/><circle cx="36" cy="52" r="4" fill="#c39bd3"/></svg>`,
+  music:`<svg viewBox="0 0 80 80" fill="none"><path d="M30 56 Q30 63 24 63 Q18 63 18 56 Q18 49 24 49 Q30 49 30 56Z" fill="#c39bd3"/><path d="M56 50 Q56 57 50 57 Q44 57 44 50 Q44 43 50 43 Q56 43 56 50Z" fill="#9b59b6"/><path d="M30 56 L30 26 L56 20 L56 50" stroke="#7d3c98" stroke-width="2.5"/><g stroke="#f9c74f" stroke-width="1.5" stroke-linecap="round" fill="none"><path d="M18 22 Q24 16 30 22"/><path d="M48 14 Q54 8 60 14"/></g></svg>`,
+  craft:`<svg viewBox="0 0 80 80" fill="none"><rect x="18" y="30" width="44" height="30" rx="5" fill="#f5deb3" stroke="#d4a054" stroke-width="1.5"/><path d="M18 36 L40 50 L62 36" stroke="#d4a054" stroke-width="1.5" fill="none"/><rect x="28" y="14" width="9" height="18" rx="3" fill="#e8a030"/><rect x="43" y="14" width="9" height="18" rx="3" fill="#f4845f"/><circle cx="40" cy="30" r="5" fill="#f9c74f"/></svg>`,
+  writing:`<svg viewBox="0 0 80 80" fill="none"><rect x="16" y="12" width="42" height="54" rx="4" fill="white" stroke="#e8d5b0" stroke-width="1.5"/><line x1="24" y1="26" x2="50" y2="26" stroke="#c8b89a" stroke-width="1.5"/><line x1="24" y1="34" x2="50" y2="34" stroke="#c8b89a" stroke-width="1.5"/><line x1="24" y1="42" x2="44" y2="42" stroke="#c8b89a" stroke-width="1.5"/><path d="M52 58 L64 22 L70 26 L58 62Z" fill="#e8a030" opacity=".85"/><path d="M52 58 L50 66 L58 62Z" fill="#c8781a"/></svg>`,
+  people:`<svg viewBox="0 0 80 80" fill="none"><circle cx="28" cy="24" r="12" fill="#85c1e9"/><circle cx="52" cy="24" r="12" fill="#f9b4ba"/><path d="M6 66 Q6 46 28 46 Q50 46 50 66" fill="#85c1e9" opacity=".7"/><path d="M30 66 Q30 46 52 46 Q74 46 74 66" fill="#f9b4ba" opacity=".7"/></svg>`,
+  heart:`<svg viewBox="0 0 80 80" fill="none"><path d="M40 64 L14 38 Q8 28 18 20 Q28 12 40 26 Q52 12 62 20 Q72 28 66 38Z" fill="#f28b82"/><path d="M40 56 L20 36 Q16 30 22 24 Q28 18 40 30 Q52 18 58 24 Q64 30 60 36Z" fill="#f9b4ba"/></svg>`,
+  gift:`<svg viewBox="0 0 80 80" fill="none"><rect x="16" y="36" width="48" height="30" rx="3" fill="#85c1e9"/><rect x="14" y="26" width="52" height="14" rx="3" fill="#60a8e0"/><line x1="40" y1="26" x2="40" y2="66" stroke="white" stroke-width="2"/><line x1="14" y1="33" x2="66" y2="33" stroke="white" stroke-width="2"/><path d="M40 26 Q30 10 22 18 Q14 26 40 26Z" fill="#f4845f"/><path d="M40 26 Q50 10 58 18 Q66 26 40 26Z" fill="#f9c74f"/></svg>`,
+  hug:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="26" r="13" fill="#f9b4ba"/><circle cx="40" cy="24" r="5" fill="#f28b82"/><path d="M22 52 Q22 40 40 40 Q58 40 58 52 Q68 56 66 66 L14 66 Q12 56 22 52Z" fill="#f9c74f" opacity=".9"/><path d="M20 54 Q14 50 18 42 L28 48" stroke="#e8a030" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M60 54 Q66 50 62 42 L52 48" stroke="#e8a030" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  run:`<svg viewBox="0 0 80 80" fill="none"><circle cx="50" cy="16" r="8" fill="#f9c74f"/><path d="M50 24 L44 42 L28 52" stroke="#5ca05a" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M44 42 L52 58 L62 62" stroke="#5ca05a" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M44 34 L28 30 L20 38" stroke="#7fb87a" stroke-width="2.5" stroke-linecap="round" fill="none"/><ellipse cx="40" cy="70" rx="26" ry="3.5" fill="#a8d8a0" opacity=".4"/></svg>`,
+  swim:`<svg viewBox="0 0 80 80" fill="none"><rect y="44" width="80" height="36" fill="#60a8e0" opacity=".25"/><path d="M0 50 Q10 42 20 50 Q30 58 40 50 Q50 42 60 50 Q70 58 80 50" stroke="#3a8bc8" stroke-width="2.5" fill="none"/><circle cx="40" cy="28" r="10" fill="#f9c74f"/><path d="M40 38 L18 50" stroke="#f9b4ba" stroke-width="3" stroke-linecap="round"/><path d="M40 38 L58 46" stroke="#f4845f" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  yoga:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="14" r="8" fill="#c39bd3"/><line x1="40" y1="22" x2="40" y2="48" stroke="#9b59b6" stroke-width="3" stroke-linecap="round"/><path d="M40 34 Q26 30 18 40" stroke="#c39bd3" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M40 34 Q54 30 62 40" stroke="#c39bd3" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M40 48 Q28 56 24 68" stroke="#9b59b6" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M40 48 Q52 56 56 68" stroke="#9b59b6" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+  bike:`<svg viewBox="0 0 80 80" fill="none"><circle cx="20" cy="52" r="14" fill="none" stroke="#5ca05a" stroke-width="3"/><circle cx="60" cy="52" r="14" fill="none" stroke="#5ca05a" stroke-width="3"/><path d="M20 52 L36 26 L50 26 L60 52" stroke="#7fb87a" stroke-width="2.5" fill="none" stroke-linejoin="round"/><line x1="36" y1="26" x2="40" y2="52" stroke="#7fb87a" stroke-width="2"/><circle cx="20" cy="52" r="4" fill="#5ca05a"/><circle cx="60" cy="52" r="4" fill="#5ca05a"/><circle cx="40" cy="26" r="3" fill="#f9c74f"/></svg>`,
+  dance:`<svg viewBox="0 0 80 80" fill="none"><circle cx="42" cy="12" r="8" fill="#f4845f"/><path d="M42 20 Q36 34 28 44" stroke="#f28b82" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M42 20 Q52 30 60 28" stroke="#f9b4ba" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M28 44 Q18 56 20 66" stroke="#f4845f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 44 Q38 58 36 68" stroke="#f28b82" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+  sleep:`<svg viewBox="0 0 80 80" fill="none"><path d="M28 52 Q18 32 32 20 Q36 16 42 16 Q32 22 32 34 Q32 46 44 52 Q36 56 28 52Z" fill="#c8dff0"/><path d="M28 52 Q40 60 52 54 Q64 48 64 36 Q70 46 66 56 Q58 70 40 68 Q20 66 28 52Z" fill="#3a8bc8" opacity=".6"/><circle cx="58" cy="18" r="4" fill="#f9c74f"/><circle cx="66" cy="12" r="2.5" fill="#f9e4b0"/><circle cx="50" cy="12" r="3" fill="#f9c74f"/></svg>`,
+  meditate:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="14" r="8" fill="#c39bd3"/><line x1="40" y1="22" x2="40" y2="42" stroke="#9b59b6" stroke-width="2.5" stroke-linecap="round"/><path d="M18 50 Q18 42 40 42 Q62 42 62 50" stroke="#c39bd3" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="52" rx="24" ry="8" fill="#e8d5f5" opacity=".55"/><path d="M28 34 Q22 26 26 20" stroke="#c39bd3" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M52 34 Q58 26 54 20" stroke="#c39bd3" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  peace:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" fill="none" stroke="#85c1e9" stroke-width="2"/><line x1="40" y1="14" x2="40" y2="66" stroke="#85c1e9" stroke-width="2"/><line x1="40" y1="40" x2="18" y2="60" stroke="#85c1e9" stroke-width="2"/><line x1="40" y1="40" x2="62" y2="60" stroke="#85c1e9" stroke-width="2"/><circle cx="40" cy="26" r="6" fill="#c39bd3" opacity=".85"/></svg>`,
+  tea:`<svg viewBox="0 0 80 80" fill="none"><path d="M20 34 L24 62 Q24 67 40 67 Q56 67 56 62 L60 34Z" fill="#f5f0e8" stroke="#e8d5b0" stroke-width="1.5"/><path d="M60 40 Q72 40 72 50 Q72 60 60 58" stroke="#d4a054" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M30 24 Q30 16 36 13" stroke="#7fb87a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M40 20 Q40 12 46 9" stroke="#7fb87a" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  book:`<svg viewBox="0 0 80 80" fill="none"><rect x="14" y="14" width="26" height="52" rx="3" fill="#f5deb3"/><rect x="40" y="14" width="26" height="52" rx="3" fill="white" stroke="#e8d5b0" stroke-width="1"/><line x1="40" y1="14" x2="40" y2="66" stroke="#c8a870" stroke-width="2"/><line x1="46" y1="28" x2="60" y2="28" stroke="#c8b89a" stroke-width="1.5"/><line x1="46" y1="36" x2="60" y2="36" stroke="#c8b89a" stroke-width="1.5"/><line x1="46" y1="44" x2="54" y2="44" stroke="#c8b89a" stroke-width="1.5"/></svg>`,
+  puzzle:`<svg viewBox="0 0 80 80" fill="none"><rect x="14" y="14" width="22" height="22" rx="3" fill="#85c1e9"/><rect x="44" y="14" width="22" height="22" rx="3" fill="#f28b82"/><rect x="14" y="44" width="22" height="22" rx="3" fill="#f9c74f"/><rect x="44" y="44" width="22" height="22" rx="3" fill="#7fb87a"/><path d="M36 24 Q40 18 44 24" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M24 36 Q30 40 24 44" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M44 56 Q40 62 36 56" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M56 44 Q50 40 56 36" fill="none" stroke="#fff" stroke-width="2.5"/></svg>`,
+  idea:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="34" r="18" fill="#f9c74f" opacity=".9"/><path d="M32 50 L32 58 Q32 62 40 62 Q48 62 48 58 L48 50Z" fill="#f0b030"/><line x1="36" y1="62" x2="44" y2="62" stroke="#d4a054" stroke-width="2"/><path d="M34 50 Q34 42 28 38 Q22 34 24 26 Q26 16 40 16 Q54 16 56 26 Q58 34 52 38 Q46 42 46 50" stroke="#e8a030" stroke-width="1.5" fill="none"/><g stroke="#f9e4b0" stroke-width="2"><line x1="40" y1="8" x2="40" y2="12"/><line x1="56" y1="12" x2="53" y2="15"/><line x1="24" y1="12" x2="27" y2="15"/></g></svg>`,
+  home:`<svg viewBox="0 0 80 80" fill="none"><path d="M10 40 L40 14 L70 40" stroke="#d4a054" stroke-width="2.5" fill="none" stroke-linejoin="round"/><rect x="18" y="40" width="44" height="28" rx="2" fill="#f5deb3"/><rect x="32" y="52" width="16" height="16" rx="2" fill="#c8a870"/><rect x="24" y="44" width="10" height="10" rx="2" fill="#85c1e9"/><rect x="46" y="44" width="10" height="10" rx="2" fill="#85c1e9"/></svg>`,
+  cook:`<svg viewBox="0 0 80 80" fill="none"><ellipse cx="40" cy="44" rx="24" ry="14" fill="#f5deb3" stroke="#d4a054" stroke-width="1.5"/><ellipse cx="40" cy="56" rx="24" ry="8" fill="#e8c887"/><path d="M30 30 Q30 20 34 17" stroke="#f28b82" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M40 28 Q40 18 44 15" stroke="#f9c74f" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M50 30 Q50 20 54 17" stroke="#f4845f" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+  plant:`<svg viewBox="0 0 80 80" fill="none"><rect x="28" y="52" width="24" height="18" rx="3" fill="#c8a870"/><line x1="40" y1="52" x2="40" y2="28" stroke="#5ca05a" stroke-width="2.5" stroke-linecap="round"/><path d="M40 40 Q28 32 24 20 Q32 18 40 32Z" fill="#7fb87a"/><path d="M40 36 Q52 28 56 16 Q48 14 40 28Z" fill="#5ca05a"/></svg>`,
+  movie:`<svg viewBox="0 0 80 80" fill="none"><rect x="8" y="18" width="64" height="44" rx="6" fill="#1a1a3e" opacity=".85"/><circle cx="18" cy="28" r="4" fill="#f9c74f"/><circle cx="62" cy="28" r="4" fill="#f9c74f"/><circle cx="18" cy="52" r="4" fill="#f9c74f"/><circle cx="62" cy="52" r="4" fill="#f9c74f"/><path d="M32 28 L54 40 L32 52Z" fill="white" opacity=".9"/></svg>`,
+  game:`<svg viewBox="0 0 80 80" fill="none"><rect x="10" y="24" width="60" height="36" rx="12" fill="#3a3a6e" opacity=".9"/><circle cx="56" cy="38" r="4" fill="#f28b82"/><circle cx="64" cy="44" r="4" fill="#85c1e9"/><line x1="22" y1="44" x2="34" y2="44" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="28" y1="38" x2="28" y2="50" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>`,
+  music2:`<svg viewBox="0 0 80 80" fill="none"><path d="M14 30 Q14 18 26 16 Q38 14 38 24 Q38 32 26 34 Q14 36 14 30Z" fill="#c39bd3" opacity=".8"/><path d="M42 22 Q42 10 54 8 Q66 6 66 16 Q66 26 54 28 Q42 30 42 22Z" fill="#9b59b6" opacity=".8"/><path d="M14 52 Q8 38 18 28 Q22 36 26 34 Q24 42 30 52 Q22 58 14 52Z" fill="#c39bd3"/><path d="M42 46 Q36 32 44 22 Q48 30 54 28 Q52 36 58 46 Q50 52 42 46Z" fill="#9b59b6"/><path d="M30 52 Q38 66 50 58 Q60 52 58 46 Q52 52 42 46 Q40 54 30 52Z" fill="#7d3c98"/></svg>`,
+  party:`<svg viewBox="0 0 80 80" fill="none"><path d="M20 66 L36 22" stroke="#f9c74f" stroke-width="9" stroke-linecap="round"/><circle cx="36" cy="18" r="6" fill="#f4845f"/><path d="M52 58 L46 30" stroke="#85c1e9" stroke-width="7" stroke-linecap="round"/><circle cx="46" cy="26" r="5" fill="#7fb87a"/><circle cx="28" cy="34" r="4" fill="#f28b82"/><circle cx="58" cy="40" r="3.5" fill="#c39bd3"/><circle cx="44" cy="62" r="3" fill="#f9c74f"/></svg>`,
+  pray:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="18" r="10" fill="#f9c74f" opacity=".8"/><path d="M30 30 Q24 44 26 56 Q28 64 40 64 Q52 64 54 56 Q56 44 50 30" fill="#f5ead0" stroke="#e8d0a0" stroke-width="1.5"/><line x1="32" y1="36" x2="28" y2="52" stroke="#d4a054" stroke-width="2" stroke-linecap="round"/><line x1="48" y1="36" x2="52" y2="52" stroke="#d4a054" stroke-width="2" stroke-linecap="round"/><path d="M33 48 Q40 53 47 48" stroke="#d4a054" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+  volunteer:`<svg viewBox="0 0 80 80" fill="none"><path d="M40 60 L16 38 Q10 28 20 20 Q30 12 40 26 Q50 12 60 20 Q70 28 64 38Z" fill="#f28b82"/><circle cx="40" cy="22" r="8" fill="#f9b4ba"/><path d="M34 60 Q32 68 38 70 Q44 72 42 64" stroke="#f28b82" stroke-width="2" fill="none"/></svg>`,
+  food:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="44" r="22" fill="#f5deb3" stroke="#d4a054" stroke-width="1.5"/><path d="M28 38 Q30 34 36 34 Q38 38 40 34 Q42 30 46 34 Q52 34 52 40" stroke="#f4845f" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M30 48 Q40 56 50 48" stroke="#7fb87a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M36 28 Q38 20 40 18 Q42 20 44 28" stroke="#f9c74f" stroke-width="1.5" fill="none"/></svg>`,
+  walk:`<svg viewBox="0 0 80 80" fill="none"><circle cx="46" cy="14" r="8" fill="#f9c74f"/><path d="M46 22 L38 42 L22 52" stroke="#5ca05a" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M38 42 L44 58 L54 64" stroke="#5ca05a" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M38 34 L24 30 L18 36" stroke="#7fb87a" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="10" y1="70" x2="70" y2="70" stroke="#a8d8a0" stroke-width="2"/></svg>`,
+  pet:`<svg viewBox="0 0 80 80" fill="none"><ellipse cx="40" cy="48" rx="20" ry="16" fill="#f5deb3"/><circle cx="40" cy="30" r="14" fill="#e8c887"/><ellipse cx="28" cy="22" rx="6" ry="8" fill="#e8c887" transform="rotate(-15 28 22)"/><ellipse cx="52" cy="22" rx="6" ry="8" fill="#e8c887" transform="rotate(15 52 22)"/><circle cx="36" cy="30" r="3" fill="#2d2a26"/><circle cx="44" cy="30" r="3" fill="#2d2a26"/><circle cx="37" cy="29" r="1" fill="white"/><circle cx="45" cy="29" r="1" fill="white"/><ellipse cx="40" cy="36" rx="4" ry="3" fill="#f4845f"/><path d="M36 38 Q40 43 44 38" stroke="#f4845f" stroke-width="1.5" fill="none"/></svg>`,
+  shopping:`<svg viewBox="0 0 80 80" fill="none"><path d="M22 26 L14 66 L66 66 L58 26Z" fill="#f5deb3" stroke="#d4a054" stroke-width="1.5"/><path d="M30 26 Q30 13 40 13 Q50 13 50 26" stroke="#d4a054" stroke-width="2" fill="none"/><circle cx="30" cy="68" r="5" fill="#c8a870"/><circle cx="54" cy="68" r="5" fill="#c8a870"/></svg>`,
+  activity:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" fill="#f5ead0"/><path d="M28 40 L36 48 L52 32" stroke="#d4a054" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  default:`<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" fill="#e8f0f5"/><circle cx="40" cy="40" r="14" fill="#85c1e9" opacity=".5"/><circle cx="40" cy="40" r="6" fill="#3a8bc8" opacity=".7"/></svg>`
+};
+
+function getMoodSVG(type){ return SVGS[type]||SVGS.default; }
+
+// ─── Mood type per activity ID ──────────────────────────────────────────────
+function getMoodType(id){
+  const m={
+    1:'yoga',2:'home',3:'volunteer',4:'mountain',5:'party',6:'people',7:'puzzle',8:'music',
+    9:'run',10:'idea',11:'shopping',12:'wave',13:'palette',14:'mountain',15:'book',16:'run',
+    17:'run',18:'home',19:'wave',20:'party',21:'book',22:'home',23:'run',24:'book',
+    25:'tea',26:'idea',27:'bike',28:'tree',29:'music',30:'meditate',31:'wave',32:'heart',
+    33:'home',34:'movie',35:'meditate',36:'tree',37:'volunteer',38:'home',39:'idea',40:'game',
+    41:'puzzle',42:'party',43:'puzzle',44:'heart',45:'home',46:'people',47:'run',48:'tea',
+    49:'bike',50:'home',51:'writing',52:'pet',53:'mountain',54:'tree',55:'people',56:'music',
+    57:'meditate',58:'home',59:'party',60:'pray',61:'book',62:'people',63:'people',64:'bike',
+    65:'music',66:'cook',67:'mountain',68:'heart',69:'home',70:'palette',71:'sleep',72:'people',
+    73:'cook',74:'palette',75:'idea',76:'walk',77:'tea',78:'music',79:'craft',80:'game',
+    81:'people',82:'game',83:'craft',84:'home',85:'writing',86:'volunteer',87:'party',88:'run',
+    89:'party',90:'bird',91:'plant',92:'book',93:'shopping',94:'dance',95:'sun',96:'bike',
+    97:'meditate',98:'heart',99:'party',100:'idea',101:'idea',102:'tea',103:'bird',104:'heart',
+    105:'people',106:'bike',107:'music',108:'people',109:'run',110:'people',111:'gift',112:'idea',
+    113:'hug',114:'star_sky',115:'run',116:'walk',117:'run',118:'music',119:'tree',120:'idea',
+    121:'writing',122:'puzzle',123:'peace',124:'wave',125:'heart',126:'heart',127:'heart',128:'people',
+    129:'yoga',130:'idea',131:'food',132:'heart',133:'heart',134:'people',135:'people',136:'run',
+    137:'volunteer',138:'people',139:'sleep',140:'tree',141:'run',142:'people',143:'party',144:'movie',
+    145:'heart',146:'peace',147:'idea',148:'cook',149:'puzzle',150:'pray',151:'idea',152:'home',
+    153:'peace',154:'people',155:'party',156:'home',157:'people',158:'food',159:'flower',160:'heart',
+    161:'party',162:'home',163:'heart',164:'people',165:'sun',166:'peace',167:'idea',168:'people',
+    169:'writing',170:'run',171:'people',172:'pray',173:'hug',174:'volunteer',175:'people',176:'peace',
+    177:'people',178:'idea',179:'game',180:'sleep',181:'tree',182:'book',183:'bike',184:'meditate',
+    185:'run',186:'home',187:'swim',188:'run',189:'tree',190:'run',191:'home',192:'people',
+    193:'music',194:'people',195:'craft',196:'party',197:'home',198:'people',199:'heart',200:'book',
+    201:'sleep',202:'idea',203:'puzzle',204:'heart',205:'heart',206:'book',207:'run',208:'cook',
+    209:'bird',210:'shopping',211:'walk',212:'fire',213:'puzzle',214:'shopping',215:'puzzle',216:'heart',
+    217:'home',218:'people',219:'bike',220:'people',221:'people',222:'party',223:'writing',224:'idea',
+    225:'people',226:'food',227:'people',228:'heart',229:'wave',230:'heart',231:'tree',232:'heart',
+    233:'plant',234:'tea',235:'walk',236:'home',237:'run',238:'craft',239:'pray',240:'people',
+    241:'wave',242:'food',243:'sleep',244:'people',245:'people',246:'shopping',247:'idea',248:'volunteer',
+    249:'swim',250:'volunteer',251:'pray',252:'run',253:'people',254:'people',255:'book',256:'home',
+    257:'walk',258:'people',259:'people',260:'run',261:'walk',262:'party',263:'music',264:'pet',
+    265:'movie',266:'star_sky',267:'people',268:'hug',269:'food',270:'food',271:'cook',272:'food',
+    273:'peace',274:'book',275:'sun',276:'game',277:'idea',278:'music2',279:'plant',280:'walk',
+    281:'movie',282:'movie'
+  };
+  return m[id]||'default';
+}
+
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const CATEGORIES=[
+  {id:'outdoors',name:'Outdoors & Nature',icon:'🌿',bg:'#d8edd0',border:'#7fb87a',badgeBg:'#eaf5ec',ids:[4,12,14,28,31,36,54,90,91,95,103,114,119,124,136,140,159,181,189,209,229,231,241,266,272,279]},
+  {id:'creative',name:'Creative & Arts',icon:'🎨',bg:'#e6d8f0',border:'#c39bd3',badgeBg:'#f2ecf9',ids:[13,29,51,56,65,70,74,78,79,83,85,118,121,169,195,238]},
+  {id:'social',name:'Social & Connection',icon:'💛',bg:'#f5e8cc',border:'#d4a054',badgeBg:'#fdf4e4',ids:[6,32,44,46,55,59,72,86,87,89,98,104,105,108,110,111,128,132,133,135,138,142,145,154,155,157,160,163,164,168,173,174,175,177,192,196,198,199,218,221,225,228,230,232,234,240,244,245,248,253,258,259,262,267]},
+  {id:'physical',name:'Physical Activity',icon:'🏃',bg:'#d0e4f5',border:'#60a8e0',badgeBg:'#e8f2fb',ids:[1,9,16,47,50,67,80,88,94,96,109,117,119,141,170,183,185,187,188,190,207,219,237,249,252,260]},
+  {id:'rest',name:'Rest & Relaxation',icon:'☁️',bg:'#eeeee0',border:'#a0b890',badgeBg:'#f6f6ed',ids:[30,35,71,77,95,97,113,123,129,139,146,153,166,176,180,201,273,275]},
+  {id:'learning',name:'Learning & Growth',icon:'📚',bg:'#dceef8',border:'#85c1e9',badgeBg:'#eaf4fb',ids:[7,21,22,24,26,43,61,75,92,100,101,130,147,167,202,206,224,247,274]},
+  {id:'home',name:'Home & Everyday',icon:'🏠',bg:'#f2e6d8',border:'#c8a870',badgeBg:'#faf3ea',ids:[2,11,18,33,38,45,48,63,69,73,77,84,93,102,147,148,152,156,162,165,169,191,193,197,200,217,223,233,236,238,256]},
+  {id:'entertain',name:'Entertainment',icon:'🎬',bg:'#e4d0e8',border:'#b090c8',badgeBg:'#f4edf9',ids:[8,20,23,25,27,34,40,44,49,53,59,64,80,82,87,99,106,107,120,131,143,144,158,161,179,182,200,222,226,255,261,263,265,269,276,277,281,282]},
+  {id:'spiritual',name:'Spirituality & Meaning',icon:'✨',bg:'#f0e8d0',border:'#c8a870',badgeBg:'#fdf7e8',ids:[3,15,37,60,100,137,150,172,216,239,248,250,251]},
+  {id:'food',name:'Food & Cooking',icon:'🍽️',bg:'#f5e0cc',border:'#e8a030',badgeBg:'#fdf0e0',ids:[66,131,148,158,208,226,234,242,269,270,271,272]},
+];
+
+const ACTIVITIES=[
+  {id:1,name:"Doing yoga"},{id:2,name:"Dressing up for fun"},{id:3,name:"Contributing to religious, charitable, or other groups"},{id:4,name:"Taking a trip to the countryside"},{id:5,name:"Talking about sports"},{id:6,name:"Meeting someone new"},{id:7,name:"Taking tests when well prepared"},{id:8,name:"Going to a concert"},{id:9,name:"Playing baseball or softball"},{id:10,name:"Planning trips or vacations"},{id:11,name:"Buying things for myself"},{id:12,name:"Being at the beach"},{id:13,name:"Doing artwork (painting, sculpture, drawing, etc.)"},{id:14,name:"Rock climbing or mountaineering"},{id:15,name:"Reading the Scriptures or other sacred works"},{id:16,name:"Playing golf"},{id:17,name:"Taking part in military activities"},{id:18,name:"Rearranging or redecorating my room or house"},{id:19,name:"Going naked"},{id:20,name:"Going to a sports event"},{id:21,name:"Reading a 'Do it Yourself' article"},{id:22,name:"Doing a 'Do it Yourself' project"},{id:23,name:"Going to the races (horse, car, boat, etc.)"},{id:24,name:"Reading"},{id:25,name:"Going to a bar, tavern, or club"},{id:26,name:"Going to lectures or hearing speakers"},{id:27,name:"Driving skillfully"},{id:28,name:"Breathing clean air"},{id:29,name:"Thinking up or arranging a song or music"},{id:30,name:"Meditating"},{id:31,name:"Boating (canoeing, kayaking, sailing, etc.)"},{id:32,name:"Pleasing a friend or family member"},{id:33,name:"Restoring antiques, finishing furniture, etc."},{id:34,name:"Watching TV"},{id:35,name:"Talking to myself"},{id:36,name:"Camping"},{id:37,name:"Working in politics"},{id:38,name:"Working on machines (cars, bikes, motorcycles, etc.)"},{id:39,name:"Thinking about something good in the future"},{id:40,name:"Playing cards"},{id:41,name:"Completing a difficult task"},{id:42,name:"Laughing"},{id:43,name:"Solving a problem, puzzle, or crossword"},{id:44,name:"Being at weddings, baptisms, confirmations, etc."},{id:45,name:"Shaving"},{id:46,name:"Having lunch with friends or associates"},{id:47,name:"Playing tennis"},{id:48,name:"Taking a shower"},{id:49,name:"Driving long distances"},{id:50,name:"Woodworking, carpentry"},{id:51,name:"Writing short stories, novels, plays, or poetry"},{id:52,name:"Being with animals"},{id:53,name:"Riding in an airplane"},{id:54,name:"Exploring (hiking, spelunking, etc.)"},{id:55,name:"Having a frank and open conversation"},{id:56,name:"Singing in a group"},{id:57,name:"Thinking about myself or my problems"},{id:58,name:"Working on my job"},{id:59,name:"Going to a party"},{id:60,name:"Going to church functions"},{id:61,name:"Speaking a foreign language"},{id:62,name:"Going to civic or social club meetings"},{id:63,name:"Going to a business meeting or convention"},{id:64,name:"Being in a sporty or expensive car"},{id:65,name:"Playing a musical instrument"},{id:66,name:"Making snacks"},{id:67,name:"Skiing"},{id:68,name:"Being helped"},{id:69,name:"Combing or brushing my hair"},{id:70,name:"Acting"},{id:71,name:"Taking a nap"},{id:72,name:"Being with friends"},{id:73,name:"Canning, freezing, making preserves, etc."},{id:74,name:"Making art"},{id:75,name:"Solving a personal problem"},{id:76,name:"Being in a city"},{id:77,name:"Taking a bath"},{id:78,name:"Singing to myself"},{id:79,name:"Making food or crafts to sell or give away"},{id:80,name:"Playing pool or billiards"},{id:81,name:"Being with my grandchildren"},{id:82,name:"Playing chess or checkers"},{id:83,name:"Doing craft work (pottery, jewelry, leather, weaving, etc.)"},{id:84,name:"Putting on makeup, fixing my hair, etc."},{id:85,name:"Designing or drafting"},{id:86,name:"Visiting people who are sick or in trouble"},{id:87,name:"Cheering, rooting"},{id:88,name:"Bowling"},{id:89,name:"Being popular at a gathering"},{id:90,name:"Watching wild animals"},{id:91,name:"Gardening, landscaping, or doing yard work"},{id:92,name:"Reading essays or technical/academic literature"},{id:93,name:"Wearing new clothes"},{id:94,name:"Dancing"},{id:95,name:"Sitting in the sun"},{id:96,name:"Riding a motorcycle"},{id:97,name:"Just sitting and thinking"},{id:98,name:"Seeing good things happen to my family or friends"},{id:99,name:"Going to a fair, carnival, zoo, or amusement park"},{id:100,name:"Talking about philosophy or religion"},{id:101,name:"Planning or organizing something"},{id:102,name:"Having a drink by myself"},{id:103,name:"Listening to the sounds of nature"},{id:104,name:"Dating"},{id:105,name:"Having a lively talk"},{id:106,name:"Racing in a car, motorcycle, or boat"},{id:107,name:"Listening to the radio"},{id:108,name:"Having friends come to visit"},{id:109,name:"Playing in a sporting competition"},{id:110,name:"Introducing people I think would like each other"},{id:111,name:"Giving gifts"},{id:112,name:"Going to school or government meetings"},{id:113,name:"Getting massages or backrubs"},{id:114,name:"Watching the sky, clouds, or a storm"},{id:115,name:"Improving my health (exercise, diet, dental, etc.)"},{id:116,name:"Being downtown"},{id:117,name:"Wrestling or boxing"},{id:118,name:"Playing in a musical group"},{id:119,name:"Hiking"},{id:120,name:"Going to a museum or exhibit"},{id:121,name:"Writing papers, essays, articles, or memos"},{id:122,name:"Doing a job well"},{id:123,name:"Having spare time"},{id:124,name:"Fishing"},{id:125,name:"Loaning something"},{id:126,name:"Being noticed as sexually attractive"},{id:127,name:"Pleasing employers or teachers"},{id:128,name:"Counseling someone"},{id:129,name:"Going to a health club or spa"},{id:130,name:"Learning to do something new"},{id:131,name:"Going to a Drive-in (Dairy Queen, McDonald's, etc.)"},{id:132,name:"Complimenting or praising someone"},{id:133,name:"Thinking about people I like"},{id:134,name:"Being at a fraternity or sorority"},{id:135,name:"Being with my parents"},{id:136,name:"Horseback riding"},{id:137,name:"Protesting social, political, or environmental conditions"},{id:138,name:"Talking on the telephone"},{id:139,name:"Having daydreams"},{id:140,name:"Kicking leaves, sand, pebbles, etc."},{id:141,name:"Playing lawn sports (badminton, croquet, horseshoes, etc.)"},{id:142,name:"Going to school reunions or alumni meetings"},{id:143,name:"Seeing famous people"},{id:144,name:"Going to the movies"},{id:145,name:"Kissing"},{id:146,name:"Being alone"},{id:147,name:"Budgeting my time"},{id:148,name:"Cooking meals"},{id:149,name:"Outwitting a 'superior'"},{id:150,name:"Feeling the presence of the Lord in my life"},{id:151,name:"Doing a project in my own way"},{id:152,name:"Doing 'odd jobs' around the house"},{id:153,name:"Crying"},{id:154,name:"Being at a family reunion or get-together"},{id:155,name:"Giving a party or get-together"},{id:156,name:"Washing my hair"},{id:157,name:"Coaching someone"},{id:158,name:"Going to a restaurant"},{id:159,name:"Seeing or smelling a flower or plant"},{id:160,name:"Being invited out"},{id:161,name:"Receiving honors (civic, military, etc.)"},{id:162,name:"Using cologne, perfume, or aftershave"},{id:163,name:"Having someone agree with me"},{id:164,name:"Reminiscing, talking about old times"},{id:165,name:"Getting up early in the morning"},{id:166,name:"Having peace and quiet"},{id:167,name:"Doing experiments or other scientific work"},{id:168,name:"Visiting friends"},{id:169,name:"Writing in a diary"},{id:170,name:"Playing football"},{id:171,name:"Being counseled"},{id:172,name:"Saying prayers"},{id:173,name:"Giving massages or backrubs"},{id:174,name:"Doing favors for people"},{id:175,name:"Talking with people on the job or in class"},{id:176,name:"Being relaxed"},{id:177,name:"Offering help or advice"},{id:178,name:"Thinking about other people's problems"},{id:179,name:"Playing board games (Monopoly, Scrabble, etc.)"},{id:180,name:"Sleeping soundly at night"},{id:181,name:"Doing heavy outdoor work (chopping wood, farm work, etc.)"},{id:182,name:"Reading the newspaper"},{id:183,name:"Snowmobiling or dune-buggy riding"},{id:184,name:"Being in a body-awareness or therapy group"},{id:185,name:"Playing ping-pong"},{id:186,name:"Brushing my teeth"},{id:187,name:"Swimming"},{id:188,name:"Running, jogging, or doing fitness exercises"},{id:189,name:"Walking barefoot"},{id:190,name:"Playing Frisbee or catch"},{id:191,name:"Doing housework or laundry; cleaning things"},{id:192,name:"Being with my roommate"},{id:193,name:"Listening to music"},{id:194,name:"Arguing a point"},{id:195,name:"Knitting, crocheting, embroidery, or fancy needlework"},{id:196,name:"Amusing people"},{id:197,name:"Going to a barber or beautician"},{id:198,name:"Having house guests"},{id:199,name:"Being with someone I love"},{id:200,name:"Reading magazines"},{id:201,name:"Sleeping late"},{id:202,name:"Starting a new project"},{id:203,name:"Finishing a project"},{id:204,name:"Having sexual relations"},{id:205,name:"Having other sexual satisfactions"},{id:206,name:"Going to the library"},{id:207,name:"Playing soccer, rugby, hockey, or lacrosse"},{id:208,name:"Preparing a new or special food"},{id:209,name:"Bird watching"},{id:210,name:"Shopping"},{id:211,name:"Watching people"},{id:212,name:"Building or watching a fire"},{id:213,name:"Winning an argument"},{id:214,name:"Selling or trading something"},{id:215,name:"Finishing a project or task"},{id:216,name:"Confessing or apologizing"},{id:217,name:"Repairing things"},{id:218,name:"Working with others as a team"},{id:219,name:"Bicycling"},{id:220,name:"Giving direction to others"},{id:221,name:"Being with happy people"},{id:222,name:"Playing party games"},{id:223,name:"Writing letters, cards, or notes"},{id:224,name:"Talking about politics or public affairs"},{id:225,name:"Asking for help or advice"},{id:226,name:"Going to banquets, luncheons, or potlucks"},{id:227,name:"Talking about my hobby or special interest"},{id:228,name:"Smiling at people"},{id:229,name:"Playing in sand, a stream, the grass, etc."},{id:230,name:"Being with my husband, wife, or partner"},{id:231,name:"Going on field trips or nature walks"},{id:232,name:"Expressing my love to someone"},{id:233,name:"Caring for houseplants"},{id:234,name:"Having coffee or tea with friends"},{id:235,name:"Taking a walk"},{id:236,name:"Collecting things"},{id:237,name:"Playing handball, paddleball, or squash"},{id:238,name:"Sewing"},{id:239,name:"Remembering a departed friend; visiting the cemetery"},{id:240,name:"Doing things with children"},{id:241,name:"Beachcombing"},{id:242,name:"Eating snacks"},{id:243,name:"Staying up late"},{id:244,name:"Having family do something that makes me proud"},{id:245,name:"Being with my children"},{id:246,name:"Going to auctions or garage sales"},{id:247,name:"Thinking about an interesting question"},{id:248,name:"Doing volunteer work or community service"},{id:249,name:"Water skiing, surfing, or scuba diving"},{id:250,name:"Defending or protecting someone; stopping abuse"},{id:251,name:"Hearing a good sermon"},{id:252,name:"Winning a competition"},{id:253,name:"Making a new friend"},{id:254,name:"Talking about my job or school"},{id:255,name:"Reading cartoons, comic strips, or comic books"},{id:256,name:"Borrowing something"},{id:257,name:"Traveling with a group"},{id:258,name:"Seeing old friends"},{id:259,name:"Teaching someone"},{id:260,name:"Using my strength"},{id:261,name:"Traveling"},{id:262,name:"Going to office parties or get-togethers"},{id:263,name:"Attending a concert, opera, or ballet"},{id:264,name:"Playing with pets"},{id:265,name:"Going to a play"},{id:266,name:"Looking at the stars or moon"},{id:267,name:"Being coached"},{id:268,name:"Getting a massage"},{id:269,name:"Going out to eat"},{id:270,name:"Eating a favorite food"},{id:271,name:"Cooking a healthy meal"},{id:272,name:"Going on a picnic"},{id:273,name:"Sitting in a peaceful place"},{id:274,name:"Listening to educational or relaxation audio books"},{id:275,name:"Taking a long weekend"},{id:276,name:"Playing a video or computer game"},{id:277,name:"Surfing the internet"},{id:278,name:"Listening to music (favorite songs)"},{id:279,name:"Gardening"},{id:280,name:"Planning a vacation"},{id:281,name:"Going to a movie"},{id:282,name:"Watching a video"}
+];
+
+const STAR_LABELS=['','Not for me','Maybe someday','Sounds nice','Really like this','Love this! ♥'];
+let ratings={};
+let currentCat=null;
+let actFilter='all';
+
+function updateStats(){
+  const r=Object.keys(ratings).length;
+  const l=Object.values(ratings).filter(v=>v===5).length;
+  const cDone=CATEGORIES.filter(c=>c.ids.some(id=>ratings[id]>0)).length;
+  document.getElementById('s-rated').textContent=r;
+  document.getElementById('s-loved').textContent=l;
+  document.getElementById('s-cats').textContent=cDone+'/10';
+  const badge=document.getElementById('picks-badge');
+  if(r>0){badge.style.display='inline-block';badge.textContent=r;}
+  else{badge.style.display='none';}
+}
+
+function setBreadcrumb(cat){
+  const bc=document.getElementById('breadcrumb');
+  if(!cat){bc.innerHTML=`<span class="current">All Categories</span>`;}
+  else{bc.innerHTML=`<span class="crumb" onclick="showCats()">${cat.icon} All Categories</span><span class="sep">›</span><span class="current">${cat.name}</span>`;}
+}
+
+function showCats(){
+  currentCat=null;
+  document.getElementById('view-cats').classList.add('active');
+  document.getElementById('view-acts').classList.remove('active');
+  document.getElementById('view-picks').classList.remove('active');
+  document.getElementById('tab-cats').classList.add('active');
+  document.getElementById('tab-picks').classList.remove('active');
+  setBreadcrumb(null);
+  renderCats();
+  document.getElementById('act-search').value='';
+  actFilter='all';
+  document.querySelectorAll('.ftab').forEach((b,i)=>b.classList.toggle('active',i===0));
+}
+
+function renderCats(){
+  const grid=document.getElementById('cat-grid');
+  grid.innerHTML=CATEGORIES.map(cat=>{
+    const seen=new Set();const uids=cat.ids.filter(id=>{if(seen.has(id))return false;seen.add(id);return true;});
+    const total=uids.length;
+    const rated=uids.filter(id=>ratings[id]>0).length;
+    const pct=Math.round(rated/total*100);
+    return `<div class="cat-card" style="--cat-border:${cat.border}" onclick="showCat('${cat.id}')">
+      <div class="cat-art" style="background:${cat.bg}">${cat.icon}</div>
+      <h3>${cat.name}</h3>
+      <div class="cat-meta">${total} activities &nbsp;·&nbsp; ${rated} rated</div>
+      <div class="cat-prog"><div class="cat-prog-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function showCat(catId){
+  currentCat=CATEGORIES.find(c=>c.id===catId);
+  document.getElementById('view-cats').classList.remove('active');
+  document.getElementById('view-acts').classList.add('active');
+  document.getElementById('view-picks').classList.remove('active');
+  document.getElementById('tab-cats').classList.add('active');
+  document.getElementById('tab-picks').classList.remove('active');
+  setBreadcrumb(currentCat);
+  document.getElementById('act-header').innerHTML=`
+    <button class="back-btn" onclick="showCats()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Categories
+    </button>
+    <div class="cat-badge" style="background:${currentCat.badgeBg}">${currentCat.icon} ${currentCat.name}</div>`;
+  document.getElementById('act-search').value='';
+  renderActs();
+}
+
+function setActFilter(f,btn){
+  actFilter=f;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderActs();
+}
+
+function renderActs(){
+  if(!currentCat) return;
+  const q=document.getElementById('act-search').value.toLowerCase();
+  // deduplicate
+  const seen=new Set();
+  let items=currentCat.ids
+    .filter(id=>{if(seen.has(id))return false;seen.add(id);return true;})
+    .map(id=>ACTIVITIES.find(a=>a.id===id)).filter(Boolean);
+  if(q) items=items.filter(a=>a.name.toLowerCase().includes(q));
+  if(actFilter==='rated') items=items.filter(a=>ratings[a.id]>0);
+  if(actFilter==='loved') items=items.filter(a=>ratings[a.id]===5);
+  if(actFilter==='unrated') items=items.filter(a=>!ratings[a.id]);
+  const grid=document.getElementById('act-grid');
+  if(!items.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-soft);font-size:15px;">No activities match. Try a different filter.</div>`;
+    return;
+  }
+  grid.innerHTML=items.map((a,i)=>{
+    const r=ratings[a.id]||0;
+    return `<div class="act-card${r>0?' rated':''}" data-id="${a.id}" style="animation-delay:${Math.min(i,15)*0.03}s">
+      <div class="act-body">
+        <div class="act-name">${a.name}</div>
+        <div class="stars" id="stars-${a.id}">${starsHTML(a.id,r)}</div>
+        <div class="rating-text" id="rt-${a.id}">${r?STAR_LABELS[r]:'Tap to rate'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function starsHTML(id,r){
+  let h='';
+  for(let i=1;i<=5;i++)h+=`<span class="star${i<=r?' filled':''}" onclick="setRating(${id},${i})" onmouseenter="hoverS(${id},${i})" onmouseleave="unhoverS(${id})">★</span>`;
+  return h;
+}
+
+function setRating(id,val){
+  if(ratings[id]===val) delete ratings[id]; else ratings[id]=val;
+  const r=ratings[id]||0;
+  const se=document.getElementById(`stars-${id}`); if(se) se.innerHTML=starsHTML(id,r);
+  const re=document.getElementById(`rt-${id}`); if(re) re.textContent=r?STAR_LABELS[r]:'Tap to rate';
+  const card=document.querySelector(`[data-id="${id}"]`); if(card) card.classList.toggle('rated',r>0);
+  updateStats(); renderCats();
+  if(document.getElementById('view-picks').classList.contains('active')) renderPicks();
+}
+
+function hoverS(id,val){
+  const el=document.getElementById(`stars-${id}`); if(!el)return;
+  el.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('hov',i<val);if(i<val)s.classList.remove('filled');});
+}
+function unhoverS(id){
+  const el=document.getElementById(`stars-${id}`); if(!el)return;
+  const r=ratings[id]||0;
+  el.querySelectorAll('.star').forEach((s,i)=>{s.classList.remove('hov');s.classList.toggle('filled',i<r);});
+}
+
+function exportSummary(){
+  const rated=ACTIVITIES.filter(a=>ratings[a.id]);
+  if(!rated.length){showToast('No activities rated yet!');return;}
+  const byR={5:[],4:[],3:[],2:[],1:[]};
+  rated.forEach(a=>byR[ratings[a.id]].push(a.name));
+  const lines=['FEEL GOOD ACTIVITIES — CLIENT SUMMARY','='.repeat(44),
+    `Date: ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}`,
+    `Total rated: ${rated.length} of 282 activities`,''];
+  const labels={5:'Love these ★★★★★',4:'Really like ★★★★',3:'Sounds nice ★★★',2:'Maybe someday ★★',1:'Not for me ★'};
+  [5,4,3,2,1].forEach(r=>{if(byR[r].length){lines.push(labels[r]);byR[r].forEach(n=>lines.push(`  • ${n}`));lines.push('');}});
+  lines.push('— Generated with the Feel Good Activities Tool —');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain'}));
+  a.download='feel-good-activities-summary.txt';a.click();
+  showToast('Summary downloaded!');
+}
+
+function resetAll(){
+  if(!confirm('Clear all ratings?')) return;
+  ratings={};updateStats();renderCats();
+  if(currentCat) renderActs();
+  if(document.getElementById('view-picks').classList.contains('active')) renderPicks();
+}
+
+let picksFilter='all';
+
+function showPicks(){
+  document.getElementById('view-cats').classList.remove('active');
+  document.getElementById('view-acts').classList.remove('active');
+  document.getElementById('view-picks').classList.add('active');
+  document.getElementById('tab-cats').classList.remove('active');
+  document.getElementById('tab-picks').classList.add('active');
+  document.getElementById('breadcrumb').innerHTML=`<span class="current">⭐ My Picks</span>`;
+  picksFilter='all';
+  document.querySelectorAll('#view-picks .ftab').forEach((b,i)=>b.classList.toggle('active',i===0));
+  renderPicks();
+}
+
+function setPicksFilter(f,btn){
+  picksFilter=f;
+  document.querySelectorAll('#view-picks .ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPicks();
+}
+
+function renderPicks(){
+  const container=document.getElementById('picks-content');
+  let items=ACTIVITIES.filter(a=>ratings[a.id]>0);
+  if(picksFilter!=='all') items=items.filter(a=>ratings[a.id]===parseInt(picksFilter));
+
+  if(!items.length){
+    container.innerHTML=`<div class="empty-picks">
+      <div class="emoji">${picksFilter==='all'?'⭐':'🔍'}</div>
+      <p>${picksFilter==='all'
+        ? 'No activities rated yet.<br>Explore categories and tap the stars!'
+        : 'No activities with this rating yet.'}</p>
+    </div>`;
+    return;
+  }
+
+  // Group by rating (5→1)
+  const groups={5:[],4:[],3:[],2:[],1:[]};
+  items.forEach(a=>groups[ratings[a.id]].push(a));
+
+  const starColors={5:'#e8a030',4:'#85c1e9',3:'#7fb87a',2:'#c39bd3',1:'#bbb'};
+  const starLabels={5:'Love these',4:'Really like',3:'Sounds nice',2:'Maybe someday',1:'Not for me'};
+
+  // Find category name for each activity
+  function getCatName(id){
+    const cat=CATEGORIES.find(c=>c.ids.includes(id));
+    return cat?cat.icon+' '+cat.name:'—';
+  }
+
+  let html='';
+  [5,4,3,2,1].forEach(r=>{
+    if(!groups[r].length) return;
+    html+=`<div class="picks-group">
+      <div class="picks-group-title">
+        <div class="dot" style="background:${starColors[r]}"></div>
+        <span>${starLabels[r]}</span>
+        <span style="font-size:13px;color:var(--text-soft);font-family:'Nunito',sans-serif;font-weight:400">${'★'.repeat(r)}${'☆'.repeat(5-r)} &nbsp;·&nbsp; ${groups[r].length} activit${groups[r].length===1?'y':'ies'}</span>
+      </div>
+      <div class="picks-list">
+        ${groups[r].map((a,i)=>`
+          <div class="pick-row rated-${r}" style="animation-delay:${i*0.02}s">
+            <span class="pick-name">${a.name}</span>
+            <div class="pick-meta">
+              <span class="pick-cat">${getCatName(a.id)}</span>
+              <span class="pick-stars">${'★'.repeat(r)}</span>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  html+='<div style="height:32px"></div>';
+  container.innerHTML=html;
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+showCats();
+</script>
+</body>
+</html>
